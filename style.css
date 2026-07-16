@@ -1,0 +1,520 @@
+/* ==========================================
+   AAA PREMIUM DESIGN SYSTEM & VARIABLES
+========================================== */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+    /* Color Palette */
+    --bg-dark: #050505;
+    --sidebar-bg: rgba(12, 12, 12, 0.4);
+    --glass-bg: rgba(20, 20, 20, 0.4);
+    
+    --glass-border: rgba(255, 255, 255, 0.08);
+    --glass-border-hover: rgba(255, 255, 255, 0.15);
+    
+    --primary: #00C8FF;
+    --secondary: #2D7DFF;
+    --accent-glow: rgba(0, 200, 255, 0.3);
+    
+    --text-main: #FFFFFF;
+    --text-sec: #A0A0A0;
+    --text-muted: #555555;
+    
+    /* Filters & Depth */
+    --blur-extreme: blur(40px); /* Снижено с 80px для производительности */
+    --blur-strong: blur(24px);
+    --blur-medium: blur(12px);
+    
+    --shadow-base: 0 10px 40px rgba(0, 0, 0, 0.6);
+    --shadow-inner: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    --shadow-glow: 0 0 30px var(--accent-glow);
+    
+    /* Geometry */
+    --radius-pill: 40px;
+    --radius-lg: 24px;
+    --radius-md: 16px;
+    --radius-sm: 10px;
+    
+    /* Animation Timings */
+    --spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    --smooth: cubic-bezier(0.25, 1, 0.5, 1);
+    --t-fast: 0.2s var(--smooth);
+    --t-med: 0.4s var(--spring);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    -webkit-font-smoothing: antialiased;
+}
+
+body {
+    background-color: var(--bg-dark);
+    color: var(--text-main);
+    height: 100vh;
+    overflow: hidden;
+    position: relative;
+}
+
+/* ==========================================
+   LAYER 1: SVG NOISE FILTER
+========================================== */
+#noise-svg {
+    position: fixed;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0.04;
+    mix-blend-mode: overlay;
+    will-change: transform; /* Подсказка для GPU */
+}
+
+/* ==========================================
+   LAYER 2: AURORA BACKGROUND & LIGHT ORBS
+========================================== */
+.aurora-bg {
+    position: absolute;
+    top: -20%; left: -20%; width: 140%; height: 140%;
+    z-index: 0;
+    background: radial-gradient(circle at 50% 50%, #060606 0%, #020202 100%);
+    overflow: hidden;
+    pointer-events: none;
+}
+
+/* Оптимизация: вместо filter: blur() используем радиальные градиенты. Это ускоряет рендер в десятки раз. */
+.orb {
+    position: absolute;
+    border-radius: 50%;
+    animation: float 20s ease-in-out infinite alternate;
+    will-change: transform;
+}
+
+.orb-1 { width: 1000px; height: 1000px; background: radial-gradient(circle, rgba(0, 51, 102, 0.6) 0%, transparent 60%); top: 10%; left: 20%; }
+.orb-2 { width: 900px; height: 900px; background: radial-gradient(circle, rgba(0, 26, 77, 0.6) 0%, transparent 60%); bottom: 10%; right: 10%; animation-delay: -5s; }
+.orb-3 { width: 1200px; height: 1200px; background: radial-gradient(circle, rgba(0, 150, 255, 0.15) 0%, transparent 60%); top: 40%; left: 40%; animation-delay: -10s; }
+
+@keyframes float {
+    0% { transform: translate(0, 0) scale(1); }
+    50% { transform: translate(80px, -80px) scale(1.15); }
+    100% { transform: translate(-80px, 80px) scale(0.9); }
+}
+
+@keyframes rotateBg {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* ==========================================
+   LAYER 3: PARALLAX WRAPPER
+========================================== */
+#parallax-wrapper {
+    position: relative;
+    width: 100%; height: 100vh;
+    display: flex;
+    z-index: 10;
+    transition: transform 0.1s linear;
+    will-change: transform;
+}
+
+/* ==========================================
+   PREMIUM GLASS COMPONENT
+========================================== */
+.premium-glass {
+    /* Фоллбэк, если JS еще не посчитал координаты */
+    background: var(--glass-bg);
+    /* Динамическое освещение через CSS-переменные (настраивается в JS) */
+    background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255, 255, 255, 0.08) 0%, rgba(20, 20, 20, 0.35) 40%);
+    backdrop-filter: var(--blur-strong);
+    -webkit-backdrop-filter: var(--blur-strong);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--shadow-base), var(--shadow-inner);
+}
+
+/* ==========================================
+   ARC BROWSER SIDEBAR
+========================================== */
+.sidebar {
+    width: 72px;
+    height: 100%;
+    background: var(--sidebar-bg);
+    backdrop-filter: var(--blur-extreme);
+    -webkit-backdrop-filter: var(--blur-extreme);
+    border-right: 1px solid var(--glass-border);
+    display: flex;
+    flex-direction: column;
+    padding: 24px 12px;
+    transition: width var(--t-med), padding var(--t-med);
+    overflow: hidden;
+    z-index: 50;
+    box-shadow: 10px 0 40px rgba(0,0,0,0.7);
+}
+
+.sidebar:hover {
+    width: 260px;
+    padding: 24px;
+}
+
+.sidebar-header {
+    display: flex; align-items: center; gap: 16px; margin-bottom: 32px; padding: 0 4px;
+}
+
+.user-avatar {
+    min-width: 40px; width: 40px; height: 40px;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 4px 16px rgba(0,200,255,0.5);
+}
+
+.user-avatar svg { width: 24px; height: 24px; }
+.user-name { font-weight: 600; font-size: 1.1rem; opacity: 0; transition: opacity 0.2s; white-space: nowrap; }
+.sidebar:hover .user-name { opacity: 1; }
+
+.editable-name { outline: none; cursor: text; border-radius: 4px; transition: background 0.2s; padding: 0 4px; }
+.editable-name:focus { background: rgba(255,255,255,0.1); }
+.editable-name:hover:not(:focus) { background: rgba(255,255,255,0.05); }
+
+.nav-group { display: flex; flex-direction: column; gap: 4px; margin-bottom: 24px; }
+
+.group-label {
+    font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted);
+    margin-bottom: 8px; margin-left: 12px; opacity: 0; transition: opacity 0.2s; white-space: nowrap;
+}
+.sidebar:hover .group-label { opacity: 1; }
+
+.nav-item {
+    display: flex; align-items: center; gap: 16px;
+    padding: 12px; border-radius: var(--radius-sm);
+    color: var(--text-sec); cursor: pointer;
+    transition: all var(--t-fast); position: relative; overflow: hidden;
+}
+
+.active-indicator {
+    position: absolute; left: 0; top: 50%; transform: translateY(-50%) scaleY(0);
+    width: 3px; height: 20px; background: var(--primary); border-radius: 0 4px 4px 0;
+    transition: transform var(--t-fast);
+}
+
+.nav-item svg { min-width: 22px; width: 22px; height: 22px; fill: currentColor; transition: transform var(--t-fast); }
+.nav-item span { opacity: 0; transition: opacity 0.2s; font-weight: 500; font-size: 0.95rem; white-space: nowrap; }
+.sidebar:hover .nav-item span { opacity: 1; }
+
+.nav-item:hover { color: var(--text-main); background: rgba(255,255,255,0.08); }
+.nav-item:hover .active-indicator { transform: translateY(-50%) scaleY(1); }
+.nav-item:hover svg { transform: scale(1.1); fill: var(--primary); }
+.nav-item:active { transform: scale(0.97); }
+
+.nav-spacer { flex-grow: 1; }
+
+/* ==========================================
+   MAIN DASHBOARD
+========================================== */
+.dashboard {
+    flex-grow: 1; display: flex; flex-direction: column;
+    padding: 5vh 6vw; position: relative; overflow-y: auto; overflow-x: hidden;
+}
+
+/* WIDGETS HEADER */
+.widgets-header {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    width: 100%; margin-bottom: 8vh; animation: fadeDown 1s var(--spring) forwards;
+}
+
+.widget-glass {
+    border-radius: var(--radius-lg); padding: 24px 32px;
+    transition: transform var(--t-med), box-shadow var(--t-fast), border-color var(--t-fast);
+}
+
+.widget-glass:hover {
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.7), var(--shadow-glow);
+    border-color: var(--glass-border-hover);
+}
+
+.time-widget { display: flex; flex-direction: column; }
+.time {
+    font-size: clamp(3rem, 5vw, 4.5rem); font-weight: 700; letter-spacing: -2px;
+    background: linear-gradient(135deg, #fff 0%, #a0a0a0 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; line-height: 1.1;
+}
+.date { color: var(--text-sec); font-size: clamp(1rem, 1.5vw, 1.2rem); font-weight: 500; }
+
+.weather-widget { display: flex; align-items: center; gap: 24px; }
+.weather-icon svg { width: 56px; height: 56px; fill: var(--primary); filter: drop-shadow(0 0 16px rgba(0,200,255,0.6)); }
+.weather-info { display: flex; flex-direction: column; }
+.weather-temp { font-size: clamp(1.5rem, 2.5vw, 2rem); font-weight: 600; color: #fff; }
+.weather-desc { color: var(--text-sec); font-size: clamp(0.9rem, 1.2vw, 1.1rem); font-weight: 400; }
+
+/* ==========================================
+   SEARCH SECTION
+========================================== */
+.search-section {
+    display: flex; flex-direction: column; align-items: center;
+    width: 100%; max-width: 860px; margin: 0 auto;
+    animation: fadeUp 1s var(--spring) forwards;
+}
+
+.greeting-text {
+    font-size: clamp(2rem, 3.5vw, 3rem); font-weight: 600; margin-bottom: 48px;
+    text-align: center; letter-spacing: -0.5px;
+    background: linear-gradient(to right, #fff, #bbb);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
+
+.greeting-text span {
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 0 16px rgba(0, 200, 255, 0.4));
+}
+
+.search-container { position: relative; width: 100%; z-index: 200; perspective: 1000px; }
+
+.search-bar {
+    display: flex; align-items: center; width: 100%; height: 76px;
+    border-radius: var(--radius-pill); padding: 0 32px;
+    transition: all var(--t-med); position: relative; overflow: hidden;
+}
+
+.search-bar::before {
+    content: ''; position: absolute; top: -2px; left: -2px; right: -2px; bottom: -2px;
+    background: linear-gradient(45deg, transparent, var(--primary), transparent);
+    border-radius: var(--radius-pill); z-index: -1; opacity: 0; transition: opacity var(--t-fast);
+}
+
+.search-bar:focus-within {
+    transform: translateY(-4px) scale(1.02);
+    background: rgba(15,15,15,0.7);
+    box-shadow: 0 24px 60px rgba(0,0,0,0.9), var(--shadow-glow);
+    border-color: rgba(0,200,255,0.5);
+}
+
+.search-bar:focus-within::before { opacity: 0.4; }
+
+.search-icon { width: 28px; height: 28px; fill: var(--text-sec); margin-right: 20px; transition: fill var(--t-fast); }
+.search-bar:focus-within .search-icon { fill: var(--primary); filter: drop-shadow(0 0 8px rgba(0,200,255,0.6)); }
+
+.search-input {
+    flex-grow: 1; min-width: 0; background: transparent; border: none; color: var(--text-main);
+    font-size: 1.3rem; font-weight: 400; outline: none; z-index: 1; margin-right: 12px;
+}
+
+.search-input::placeholder { color: var(--text-muted); transition: color var(--t-fast); text-overflow: ellipsis; }
+.search-bar:focus-within .search-input::placeholder { color: rgba(255,255,255,0.4); }
+
+/* SEARCH ACTIONS (Mic, Lens, AI) */
+.search-actions {
+    display: flex; align-items: center; gap: 8px; z-index: 10; flex-shrink: 0;
+}
+
+.action-btn {
+    background: transparent; border: none; cursor: pointer;
+    width: 36px; height: 36px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    transition: all var(--t-fast);
+}
+
+.action-btn svg { width: 22px; height: 22px; fill: var(--text-sec); transition: fill var(--t-fast); }
+.action-btn:hover { background: rgba(255,255,255,0.1); }
+.action-btn:hover svg { fill: var(--primary); }
+
+.ai-btn {
+    display: flex; align-items: center; gap: 8px;
+    background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+    color: var(--text-main); font-size: 0.95rem; font-weight: 500;
+    padding: 8px 16px; border-radius: var(--radius-pill);
+    cursor: pointer; transition: all var(--t-fast);
+}
+
+.ai-btn svg { width: 18px; height: 18px; fill: #A855F7; } /* Purple sparkle */
+.ai-btn:hover {
+    background: rgba(168, 85, 247, 0.15);
+    border-color: rgba(168, 85, 247, 0.4);
+    box-shadow: 0 0 16px rgba(168, 85, 247, 0.3);
+}
+
+/* ==========================================
+   LENS MODAL
+========================================== */
+.modal-overlay {
+    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+    background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; pointer-events: none; transition: opacity var(--t-fast); z-index: 1000;
+}
+
+.modal-overlay.active { opacity: 1; pointer-events: all; }
+
+.modal-content {
+    width: 90%; max-width: 600px; padding: 40px; border-radius: var(--radius-lg);
+    position: relative; transform: scale(0.95) translateY(20px); transition: transform var(--t-med);
+    display: flex; flex-direction: column; gap: 24px;
+    background: rgba(20, 20, 20, 0.85); /* Более темный фон для модалки */
+}
+
+.modal-overlay.active .modal-content { transform: scale(1) translateY(0); }
+
+.modal-close {
+    position: absolute; top: 16px; right: 16px; background: transparent; border: none;
+    color: var(--text-sec); font-size: 28px; cursor: pointer; transition: color var(--t-fast);
+}
+
+.modal-close:hover { color: var(--primary); }
+
+.modal-title { font-size: 1.5rem; font-weight: 600; text-align: center; margin-bottom: 8px; }
+
+.drag-drop-area {
+    border: 2px dashed rgba(255, 255, 255, 0.2); border-radius: var(--radius-md);
+    padding: 60px 20px; display: flex; flex-direction: column; align-items: center; gap: 16px;
+    background: rgba(0, 0, 0, 0.2); transition: all var(--t-fast);
+}
+
+.drag-drop-area.dragover {
+    border-color: var(--primary); background: rgba(0, 200, 255, 0.05);
+}
+
+.drag-drop-area svg { width: 48px; height: 48px; fill: var(--text-sec); }
+.drag-drop-area p { color: var(--text-sec); font-size: 1rem; text-align: center; }
+
+.file-label { color: var(--primary); cursor: pointer; text-decoration: underline; font-weight: 500; }
+
+.modal-divider {
+    display: flex; align-items: center; text-align: center; color: var(--text-muted); font-size: 0.8rem;
+}
+.modal-divider::before, .modal-divider::after {
+    content: ''; flex: 1; border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+.modal-divider span { padding: 0 16px; }
+
+.lens-url-form { display: flex; gap: 12px; }
+
+.lens-url-input {
+    flex-grow: 1; background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius-sm); padding: 12px 16px; color: var(--text-main); outline: none;
+    transition: border-color var(--t-fast);
+}
+
+.lens-url-input:focus { border-color: var(--primary); box-shadow: 0 0 0 1px var(--primary); }
+
+.lens-submit-btn {
+    background: var(--primary); color: #000; border: none; border-radius: var(--radius-sm);
+    padding: 0 24px; font-weight: 600; cursor: pointer; transition: all var(--t-fast);
+}
+
+.lens-submit-btn:hover { background: #33D4FF; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0, 200, 255, 0.4); }
+
+/* ==========================================
+   SPOTLIGHT / ARC STYLE AUTOCOMPLETE 
+========================================== */
+.suggestions-box {
+    position: absolute; top: calc(100% + 24px); left: 0; width: 100%;
+    background: rgba(15, 15, 15, 0.85); /* Очень плотный фон для изоляции */
+    backdrop-filter: var(--blur-extreme);
+    -webkit-backdrop-filter: var(--blur-extreme);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 30px 80px rgba(0,0,0,0.9), 0 0 0 1px rgba(255,255,255,0.05) inset;
+    padding: 12px; display: flex; flex-direction: column; gap: 6px;
+    opacity: 0; transform: translateY(-15px) scale(0.98); pointer-events: none;
+    transition: all var(--t-med); z-index: 250;
+}
+
+.suggestions-box.active { opacity: 1; transform: translateY(0) scale(1); pointer-events: all; }
+
+.suggestion-item {
+    display: flex; align-items: center; gap: 16px;
+    padding: 14px 20px; border-radius: var(--radius-md);
+    color: var(--text-sec); cursor: pointer; transition: all 0.15s ease-out;
+    background: transparent; position: relative; overflow: hidden;
+}
+
+.suggestion-item .sugg-icon {
+    width: 32px; height: 32px; border-radius: 8px;
+    background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s;
+}
+
+.suggestion-item .sugg-icon svg { width: 18px; height: 18px; fill: var(--text-sec); transition: fill 0.2s; }
+
+.suggestion-item .sugg-text { display: flex; flex-direction: column; flex-grow: 1; }
+.suggestion-item .sugg-title { font-size: 1.1rem; font-weight: 500; color: var(--text-main); }
+.suggestion-item .sugg-type { font-size: 0.8rem; color: var(--text-muted); font-weight: 400; margin-top: 2px; }
+
+.suggestion-item .sugg-action {
+    opacity: 0; transform: translateX(-10px); transition: all 0.2s;
+}
+
+.suggestion-item .sugg-action svg { width: 20px; height: 20px; fill: var(--primary); }
+
+.suggestion-item:hover, .suggestion-item.focused {
+    background: rgba(0, 200, 255, 0.15); /* Синий акцент выделения */
+    box-shadow: inset 0 0 0 1px rgba(0, 200, 255, 0.3);
+}
+
+.suggestion-item:hover .sugg-icon, .suggestion-item.focused .sugg-icon { background: var(--primary); }
+.suggestion-item:hover .sugg-icon svg, .suggestion-item.focused .sugg-icon svg { fill: #fff; }
+.suggestion-item:hover .sugg-action, .suggestion-item.focused .sugg-action { opacity: 1; transform: translateX(0); }
+
+/* Ripple on Click */
+.suggestion-item::after {
+    content: ''; position: absolute; top: 50%; left: 50%; width: 0; height: 0;
+    background: rgba(255,255,255,0.2); border-radius: 50%; transform: translate(-50%, -50%);
+    transition: width 0.3s ease-out, height 0.3s ease-out; opacity: 1;
+}
+.suggestion-item:active::after { width: 400px; height: 400px; opacity: 0; }
+
+/* ==========================================
+   DYNAMIC SHORTCUT CARDS
+========================================== */
+.shortcuts-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 28px; width: 100%; margin-top: 60px; z-index: 50; /* Ниже чем поиск */
+}
+
+.shortcut-card {
+    border-radius: var(--radius-lg); height: 140px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px;
+    cursor: pointer; text-decoration: none; position: relative; overflow: hidden;
+    transition: transform var(--t-med), box-shadow var(--t-med), border-color var(--t-fast);
+    background: var(--glass-bg);
+}
+
+.shortcut-card:hover {
+    transform: translateY(-10px) scale(1.05);
+    border-color: rgba(255, 255, 255, 0.3);
+    box-shadow: 0 24px 50px rgba(0,0,0,0.8), 0 0 24px rgba(0, 200, 255, 0.2);
+    z-index: 60;
+}
+
+.shortcut-card:active { transform: translateY(-2px) scale(0.98); }
+
+.shortcut-icon {
+    width: 60px; height: 60px; border-radius: 50%; background: #fff;
+    display: flex; align-items: center; justify-content: center; z-index: 1;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.6); padding: 12px; transition: transform var(--t-med);
+}
+
+.shortcut-card:hover .shortcut-icon { transform: scale(1.15) rotate(5deg); }
+.shortcut-icon img { width: 100%; height: 100%; object-fit: contain; }
+
+.shortcut-title { color: var(--text-sec); font-size: 0.95rem; font-weight: 500; z-index: 1; transition: color 0.2s; }
+.shortcut-card:hover .shortcut-title { color: var(--text-main); text-shadow: 0 2px 8px rgba(0,0,0,0.8); }
+
+.add-btn { border: 1px dashed rgba(255,255,255,0.2); background: rgba(0,0,0,0.3); }
+.add-btn .shortcut-icon { background: rgba(255,255,255,0.05); box-shadow: none; border: 1px solid rgba(255,255,255,0.1); }
+.add-btn:hover { border-style: solid; border-color: var(--primary); background: rgba(0,200,255,0.08); }
+.add-btn .shortcut-icon svg { fill: var(--text-sec); width: 28px; transition: fill 0.2s; }
+.add-btn:hover .shortcut-icon svg { fill: var(--primary); }
+
+/* ==========================================
+   KEYFRAME ANIMATIONS
+========================================== */
+@keyframes fadeDown {
+    0% { opacity: 0; transform: translateY(-40px) scale(0.98); }
+    100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes fadeUp {
+    0% { opacity: 0; transform: translateY(40px) scale(0.98); }
+    100% { opacity: 1; transform: translateY(0) scale(1); }
+}

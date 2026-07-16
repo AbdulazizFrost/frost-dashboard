@@ -1,0 +1,23 @@
+{
+  "manifest_version": 3,
+  "name": "Frost Dashboard",
+  "version": "1.0",
+  "description": "Premium New Tab Dashboard for Abdulaziz",
+  "icons": {
+    "16": "icon.png",
+    "48": "icon.png",
+    "128": "icon.png"
+  },
+  "chrome_url_overrides": {
+    "newtab": "index.html"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "host_permissions": [
+    "https://suggestqueries.google.com/*"
+  ],
+  "permissions": [
+    "contextMenus"
+  ]
+}
