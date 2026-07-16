@@ -171,10 +171,23 @@ class DashboardController {
     async initWeatherWidget() {
         const tempElem = document.getElementById('weather-temp');
         const descElem = document.getElementById('weather-desc');
+        const iconElem = document.querySelector('.weather-icon svg');
         if (!tempElem || !descElem) return;
 
         try {
-            const res = await fetch('https://api.open-meteo.com/v1/forecast?latitude=55.7512&longitude=37.6184&current_weather=true');
+            // 1. Получаем геолокацию по IP
+            const geoRes = await fetch('https://get.geojs.io/v1/ip/geo.json');
+            let lat = 55.7512, lon = 37.6184, city = 'Moscow'; // Дефолт (Москва)
+            
+            if (geoRes.ok) {
+                const geoData = await geoRes.json();
+                lat = geoData.latitude || lat;
+                lon = geoData.longitude || lon;
+                city = geoData.city || city;
+            }
+
+            // 2. Получаем реальную погоду для этого города
+            const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`);
             if (!res.ok) throw new Error("Network error");
             const data = await res.json();
             
@@ -184,13 +197,20 @@ class DashboardController {
             tempElem.textContent = `${temp > 0 ? '+' : ''}${temp}°C`;
             
             let desc = 'Cloudy';
-            if (code === 0) desc = 'Clear Sky';
-            else if (code >= 1 && code <= 3) desc = 'Partly Cloudy';
-            else if (code >= 51 && code <= 67) desc = 'Rain';
-            else if (code >= 71 && code <= 82) desc = 'Snow';
-            else if (code >= 95) desc = 'Thunderstorm';
+            let color = 'var(--primary)'; // Default
             
-            descElem.textContent = desc;
+            if (code === 0) { desc = 'Clear Sky'; color = '#FFD700'; } // Sun
+            else if (code >= 1 && code <= 3) { desc = 'Partly Cloudy'; color = '#87CEFA'; }
+            else if (code >= 51 && code <= 67) { desc = 'Rain'; color = '#4169E1'; }
+            else if (code >= 71 && code <= 82) { desc = 'Snow'; color = '#FFFFFF'; }
+            else if (code >= 95) { desc = 'Storm'; color = '#9370DB'; }
+            
+            descElem.textContent = `${city} • ${desc}`;
+            
+            if (iconElem) {
+                iconElem.style.fill = color;
+                iconElem.style.filter = `drop-shadow(0 0 16px ${color}80)`;
+            }
         } catch (e) {
             console.error("Weather error:", e);
             tempElem.textContent = '--°C';
