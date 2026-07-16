@@ -210,8 +210,8 @@ class DashboardController {
 
         this.currentFocus = -1;
 
-        // Когда кликаем по пустой строке - показываем историю
-        this.input.addEventListener('focus', () => {
+        // Показываем историю только при явном клике мышкой, чтобы autofocus при старте не перекрывал шорткаты
+        this.input.addEventListener('click', () => {
             if (!this.input.value.trim()) {
                 this.showSearchHistory();
             }
