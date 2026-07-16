@@ -3,6 +3,11 @@
  * 120FPS GPU Accelerated, Parallax, Dynamic Lighting
  */
 
+// Disable browser's automatic scroll restoration to prevent "flying into the sky" on F5
+if ('scrollRestoration' in history) {
+    history.scrollRestoration = 'manual';
+}
+
 class DashboardController {
     constructor() {
         this.initTimeWidget();
@@ -223,10 +228,19 @@ class DashboardController {
             }
         });
 
+        // Закрываем подсказки при клике вне формы
         document.addEventListener('click', (e) => {
             if (!this.form.contains(e.target)) {
                 this.suggestionsBox.classList.remove('active');
             }
+        });
+
+        // Надежное закрытие списка, если поле ввода теряет фокус
+        this.input.addEventListener('blur', () => {
+            setTimeout(() => {
+                this.suggestionsBox.classList.remove('active');
+                window.scrollTo(0, 0); // Надежно сбрасываем любой системный скролл страницы
+            }, 200);
         });
 
         // =====================================
@@ -551,4 +565,10 @@ class DashboardController {
 
 document.addEventListener('DOMContentLoaded', () => {
     window.Dashboard = new DashboardController();
+    
+    // Force reset scroll on load in case browser cached it
+    const dash = document.querySelector('.dashboard');
+    if (dash) {
+        dash.scrollTop = 0;
+    }
 });
